@@ -80,6 +80,12 @@ class Database:
 
         return rows
 
+    def view_attendance(self):
+        self.cur.execute("SELECT * FROM Attendance")
+        rows = self.cur.fetchall()
+
+        return rows
+
     def view_courses(self):
         self.cur.execute("SELECT * FROM Courses")
         rows = self.cur.fetchall()
@@ -98,7 +104,7 @@ class Database:
 
         return rows
 
-    def search(self, student=None, course=None, year=None, month=None, day=None):
+    def search(self, id=None, course=None, year=None, month=None, day=None):
         exe = """SELECT S.id ,S.name, C.name,A.present,A.time FROM Attendance as A, Students as S ,Courses as C
                 WHERE A.student_id=S.id AND A.course_id=C.id """
         if course:
@@ -112,11 +118,11 @@ class Database:
 
             exe += f" AND course_id = {course} "
 
-        if student:
-            self.cur.execute("SELECT id FROM Students WHERE name = ?  ",
-                             (student,))
-            student = self.cur.fetchone()[0]
-            exe += f" AND student_id = {student} "
+        if id:
+            # self.cur.execute("SELECT id FROM Students WHERE name = ?  ",
+            #                  (student,))
+            # student = self.cur.fetchone()[0]
+            exe += f" AND student_id = {id} "
 
         if year:
             year = year
@@ -134,8 +140,9 @@ class Database:
         rows = self.cur.fetchall()
         return rows
 
-    def delete_student(self, student):
-        self.cur.execute("DELETE FROM Students WHERE name = ?", (student,))
+    def delete_student(self, student=None, id=None):
+        self.cur.execute(
+            "DELETE FROM Students WHERE name = ? OR id = ?", (student, id))
         self.conn.commit()
 
     def delete_course(self, course):
@@ -175,9 +182,9 @@ class Database:
         exe = 'DELETE FROM Students'
         self.cur.execute(exe)
         self.conn.commit()
-        exe = 'DELETE FROM Courses'
-        self.cur.execute(exe)
-        self.conn.commit()
+        # exe = 'DELETE FROM Courses'
+        # self.cur.execute(exe)
+        # self.conn.commit()
         exe = 'DELETE FROM C_S'
         self.cur.execute(exe)
         self.conn.commit()

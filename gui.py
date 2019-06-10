@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import face_recognition
 import time
+from datetime import datetime
 import os
 # -*- coding: utf-8 -*-
 
@@ -87,7 +88,8 @@ class Ui_MainWindow(object):
         self.Camera.setLayoutDirection(QtCore.Qt.LeftToRight)
         self.Camera.setAutoFillBackground(False)
         self.Camera.setStyleSheet("border:2px solid rgb(85, 170, 255);\n"
-                                  "border-radius : 5px;")
+                                  "border-radius : 5px;\n"
+                                  "color : white;")
         self.Camera.setFrameShape(QtWidgets.QFrame.Box)
         self.Camera.setFrameShadow(QtWidgets.QFrame.Plain)
         self.Camera.setLineWidth(2)
@@ -305,6 +307,76 @@ class Ui_MainWindow(object):
                                    "border-radius: 5px;\n"
                                    "font: 10pt \"NSimSun\";")
         self.Updates.setObjectName("Updates")
+
+        self.Refresh = QtWidgets.QPushButton(self.centralwidget)
+        self.Refresh.setGeometry(QtCore.QRect(705, 420, 30, 30))
+        font = QtGui.QFont()
+        font.setFamily("Sakkal Majalla")
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.Refresh.setFont(font)
+        self.Refresh.setStyleSheet("QPushButton{\n"
+                                   "color: rgb(85, 170, 255);\n"
+                                   "border:2px solid rgb(85, 170, 255);\n"
+                                   "border-radius: 5px;\n"
+                                   "}\n"
+                                   "\n"
+                                   "QPushButton::hover{\n"
+                                   "color:  rgb(255, 255, 255);\n"
+                                   "border:2px solid rgb(255, 255, 255);\n"
+                                   "border-radius: 5px;\n"
+                                   "}\n"
+                                   "\n"
+                                   "")
+        self.Refresh.setObjectName("Refresh")
+
+        self.Delete_Stu = QtWidgets.QPushButton(self.centralwidget)
+        self.Delete_Stu.setGeometry(QtCore.QRect(705, 455, 30, 30))
+        font = QtGui.QFont()
+        font.setFamily("Sakkal Majalla")
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.Delete_Stu.setFont(font)
+        self.Delete_Stu.setStyleSheet("QPushButton{\n"
+                                      "color: rgb(85, 170, 255);\n"
+                                      "border:2px solid rgb(85, 170, 255);\n"
+                                      "border-radius: 5px;\n"
+                                      "}\n"
+                                      "\n"
+                                      "QPushButton::hover{\n"
+                                      "color:  rgb(255, 255, 255);\n"
+                                      "border:2px solid rgb(255, 255, 255);\n"
+                                      "border-radius: 5px;\n"
+                                      "}\n"
+                                      "\n"
+                                      "")
+        self.Delete_Stu.setObjectName("Delete_Stu")
+
+        self.Destroy = QtWidgets.QPushButton(self.centralwidget)
+        self.Destroy.setGeometry(QtCore.QRect(705, 490, 30, 30))
+        font = QtGui.QFont()
+        font.setFamily("Sakkal Majalla")
+        font.setPointSize(15)
+        font.setBold(True)
+        font.setWeight(75)
+        self.Destroy.setFont(font)
+        self.Destroy.setStyleSheet("QPushButton{\n"
+                                   "color: rgb(85, 170, 255);\n"
+                                   "border:2px solid rgb(85, 170, 255);\n"
+                                   "border-radius: 5px;\n"
+                                   "}\n"
+                                   "\n"
+                                   "QPushButton::hover{\n"
+                                   "color:  rgb(255, 255, 255);\n"
+                                   "border:2px solid rgb(255, 255, 255);\n"
+                                   "border-radius: 5px;\n"
+                                   "}\n"
+                                   "\n"
+                                   "")
+        self.Destroy.setObjectName("Destroy")
+
         MainWindow.setCentralWidget(self.centralwidget)
 
         self.retranslateUi(MainWindow)
@@ -321,6 +393,9 @@ class Ui_MainWindow(object):
         self.timerEN = QtCore.QTimer()
         self.timerEN.timeout.connect(self.EN)
 
+        self.timerABS = QtCore.QTimer()
+        self.timerABS.timeout.connect(self.ABS)
+
         self.Play_Camera.clicked.connect(self.encode)
         self.Play_Camera.clicked.connect(self.play)
 
@@ -330,6 +405,10 @@ class Ui_MainWindow(object):
         self.Database_list.clicked.connect(self.selected_text)
         # self.Add_Face.clicked.connect(self.selected_text)
         self.Add_Face.clicked.connect(self.add_face)
+
+        self.Refresh.clicked.connect(self.R)
+        self.Delete_Stu.clicked.connect(self.X)
+        self.Destroy.clicked.connect(self.D)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
@@ -352,6 +431,9 @@ class Ui_MainWindow(object):
         self.label_8.setText(_translate("MainWindow", "By Othman Ayman"))
         self.Updates.setText(_translate(
             "MainWindow", "<html><head/><body><p align=\"center\">Welcome..</p></body></html>"))
+        self.Refresh.setText(_translate("MainWindow", "R"))
+        self.Delete_Stu.setText(_translate("MainWindow", "X"))
+        self.Destroy.setText(_translate("MainWindow", "D"))
 
     def add_stu(self):
         name = self.Name_Entry.text()
@@ -364,14 +446,26 @@ class Ui_MainWindow(object):
         self.update_text(text=text, color='green')
 
     def view_stu(self):
+        self.Database_list.clear()
         r = db.view_students()
-        rows = len(r)
-
         for s in r:
             id = s[0]
             name = s[1]
             email = s[2]
             self.Database_list.addItem(f'{id} {name} ~{email}')
+
+    def view_att(self):
+        self.Record.clear()
+        r = db.search()
+        for s in r:
+            id = s[0]
+            name = s[1]
+            course = s[2]
+            present = s[3]
+            time_att = str(s[4])
+
+            self.Record.addItem(
+                f'{id} {name} -present: {present}- ({time_att}) ')
 
     def update_text(self, text, color):
         _translate = QtCore.QCoreApplication.translate
@@ -452,11 +546,17 @@ class Ui_MainWindow(object):
 
     def set_image(self, path):
         # path = "images\\2.jpg"
-        pixmap = QtGui.QPixmap(path)  # Setup pixmap with the provided image
-        pixmap = pixmap.scaled(self.Camera.width(), self.Camera.height(
-        ), QtCore.Qt.KeepAspectRatio)  # Scale pixmap
-        self.Camera.setPixmap(pixmap)  # Set the pixmap onto the label
-        self.Camera.setAlignment(QtCore.Qt.AlignCenter)
+        if os.path.exists(path=path):
+            # Setup pixmap with the provided image
+            pixmap = QtGui.QPixmap(path)
+            pixmap = pixmap.scaled(self.Camera.width(), self.Camera.height(
+            ), QtCore.Qt.KeepAspectRatio)  # Scale pixmap
+            self.Camera.setPixmap(pixmap)  # Set the pixmap onto the label
+            self.Camera.setAlignment(QtCore.Qt.AlignCenter)
+        else:
+            _translate = QtCore.QCoreApplication.translate
+            self.Camera.setText(_translate(
+                "MainWindow", "The image is not exist!"))
 
     def EN(self):
         try:
@@ -471,15 +571,20 @@ class Ui_MainWindow(object):
                 image = face_recognition.load_image_file(f"images\\{s[0]}.jpg")
                 en = face_recognition.face_encodings(image)[0]
                 self.encoded.append(en)
+                self.rows += 1
             else:
-                self.encoded.append(None)
+                self.update_text(
+                    text=f"please add image for ({s[1]}) then try again", color='yellow')
 
-            self.rows += 1
-            k = len(self.r)
-            print(
-                self.timerEN.isActive())
-            if self.rows == k:
+                self.timerCAM.stop()
+                self.StopFlag = True
                 self.timerEN.stop()
+
+            k = len(self.r)
+            if self.rows == k:
+                self.update_text(text="Finished Encoding", color='yellow')
+                self.timerEN.stop()
+                self.update_text(text="Started!!", color='green')
 
         except Exception as e:
             self.update_text(text=e, color='red')
@@ -493,8 +598,6 @@ class Ui_MainWindow(object):
         self.r = db.view_students()
         self.rows = 0
         self.timerEN.start()
-        print('last : ',
-              self.timerEN.isActive())
 
     def play(self):
         try:
@@ -505,42 +608,106 @@ class Ui_MainWindow(object):
             self.timerCAM.start()
 
         except Exception as e:
-            self.update_text(text=e, color='red')
+            self.update_text(text=f"play: {e}", color='red')
 
     def CAM(self):
-        if len(self.r) == len(self.encoded):
-            self.update_text(text="Started!!", color='green')
-            try:
-                ret, frame = self.video_capture.read()
-                small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
-                rgb_small_frame = small_frame[:, :, ::-1]
-                face_locations = face_recognition.face_locations(
-                    rgb_small_frame)
-                face_encodings = face_recognition.face_encodings(
-                    rgb_small_frame, face_locations)
+        k = len(self.r)
+        if self.rows == k:
 
-                for face_encoding in face_encodings:
-                    # See if the face is a match for the known face(s)
-                    matches = face_recognition.compare_faces(
-                        self.encoded, face_encoding)
-                    name = "Unknown"
+            # try:
+            ret, frame = self.video_capture.read()
+            small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
+            rgb_small_frame = small_frame[:, :, ::-1]
+            face_locations = face_recognition.face_locations(
+                rgb_small_frame)
+            face_encodings = face_recognition.face_encodings(
+                rgb_small_frame, face_locations)
 
-                    # If a match was found in known_face_encodings, just use the first one.
-                    if True in matches:
-                        first_match_index = matches.index(True)
-                        name = self.names[first_match_index]
+            for face_encoding in face_encodings:
+                # See if the face is a match for the known face(s)
+                matches = face_recognition.compare_faces(
+                    self.encoded, face_encoding)
 
-                path = 'cam\\cam.jpg'
-                cv2.imwrite(path, frame)
-                self.set_image(path=path)
-                if self.StopFlag:
-                    self.video_capture.release()
-                    self.timerCAM.stop()
-            except Exception as e:
-                self.update_text(text=e, color='red')
+                # If a match was found in known_face_encodings, just use the first one.
+                if True in matches:
+                    first_match_index = matches.index(True)
+                    name = self.names[first_match_index]
+                    id = self.ids[first_match_index]
+                    email = self.emails[first_match_index]
+
+                    self.encoded.pop(first_match_index)
+                    self.names.pop(first_match_index)
+                    self.ids.pop(first_match_index)
+                    self.emails.pop(first_match_index)
+
+                    db.insert_attendance(
+                        student=name, course=course, present=1)
+                    t = str(datetime.now())
+                    mail.send(email=email, student=name,
+                              subject=course, time=t)
+                    self.update_text(
+                        text=f"Attendance added and sent email for {name}", color='green')
+
+            self.view_att()
+            path = 'cam\\cam.jpg'
+            cv2.imwrite(path, frame)
+            self.set_image(path=path)
+            if self.StopFlag:
+                self.video_capture.release()
+                self.timerCAM.stop()
+            # except Exception as e:
+            #     self.update_text(text=f"CAM: {e}", color='red')
 
     def pause(self):
-        self.StopFlag = True
+        if self.StopFlag:
+            pass
+        else:
+            self.StopFlag = True
+            self.timerABS.start()
+
+    def ABS(self):
+        if self.emails:
+            name = self.names[0]
+            id = self.ids[0]
+            email = self.emails[0]
+            self.encoded.pop(0)
+            self.names.pop(0)
+            self.ids.pop(0)
+            self.emails.pop(0)
+
+            db.insert_attendance(
+                student=name, course=course, present=0)
+            t = str(datetime.now())
+            mail.send_abs(email=email, student=name,
+                          subject=course, time=t)
+            self.update_text(
+                text=f"Sent emails for absents Successfully! ", color='green')
+        else:
+            self.timerABS.stop()
+
+    def R(self):
+        self.view_stu()
+        self.view_att()
+
+    def D(self):
+        try:
+            db.destroy()
+            self.R()
+        except Exception as e:
+            self.update_text(text=f"D: {e}", color='red')
+
+    def X(self):
+        try:
+            self.student_id, self.name = self.selected_text()
+            if self.student_id is None:
+                self.update_text(
+                    'PLEASE SELECT A STUDENT TO DELETE ', 'yellow')
+                return None
+            db.delete_student(id=self.student_id)
+            self.view_stu()
+
+        except Exception as e:
+            self.update_text(text=f"X: {e}", color='red')
 
 
 if __name__ == "__main__":
@@ -551,4 +718,5 @@ if __name__ == "__main__":
     ui.setupUi(MainWindow)
     MainWindow.show()
     ui.view_stu()
+    ui.view_att()
     sys.exit(app.exec_())

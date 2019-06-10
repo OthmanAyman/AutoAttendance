@@ -11,30 +11,35 @@ class Mail():
         self.password = "AutoAttendance19"
 
         self.context = ssl.create_default_context()
-        self.server = smtplib.SMTP_SSL(
-            "smtp.gmail.com", 465, context=self.context)
-        self.server.login(self.sender_email, self.password)
+        try:
+            self.server = smtplib.SMTP_SSL(
+                "smtp.gmail.com", 465, context=self.context)
+            self.server.login(self.sender_email, self.password)
+        except Exception as e:
+            print(e)
 
     def send(self, email, student, subject, time):
 
         self.receiver_email = email
         self.message = MIMEMultipart("alternative")
-        self.message["Subject"] = "Attendance Recorded - no-reply"
+        self.message["Subject"] = "no-reply -Attendance Team"
         self.message["From"] = self.sender_email
         self.message["To"] = self.receiver_email
 
         self.student = student
         self.subject = subject
-        self.time = time
-
+        self.time = time.split(' ')
+        self.time_date = self.time[0]
+        self.time_hour = self.time[1]
         self.html = f"""\
         <html>
           <body>
             <p> Hi,<br>
-               We inform you that we have recorded Attendance<br>
+               We want to inform you that we have recorded Attendance<br>
                for {self.student}  <br>
                in {self.subject} Subject <br>
-               at {self.time} <br>
+               on {self.time_date} <br>
+               at {self.time_hour} <br>
                best wishes , AutoAttendance team
             </p>
 
@@ -52,5 +57,40 @@ class Mail():
         except Exception as e:
             return e
 
+    def send_abs(self, email, student, subject, time):
 
-#
+        self.receiver_email = email
+        self.message = MIMEMultipart("alternative")
+        self.message["Subject"] = "no-reply -Attendance Team"
+        self.message["From"] = self.sender_email
+        self.message["To"] = self.receiver_email
+
+        self.student = student
+        self.subject = subject
+        self.time = time.split(' ')
+        self.time_date = self.time[0]
+        self.time_hour = self.time[1]
+        self.html = f"""\
+        <html>
+          <body>
+            <p> Hi,<br>
+                We want to inform you that you: {self.student} <br>
+                have missed the subject: {self.subject} <br>
+               on {self.time_date} <br>
+               hope you doing okey ..
+               best wishes , AutoAttendance team
+            </p>
+
+          </body>
+        </html>
+        """
+        self.part = MIMEText(self.html, "html")
+        self.message.attach(self.part)
+
+        try:
+            self.server.sendmail(
+                self.sender_email, self.receiver_email, self.message.as_string())
+            return "email has been sent"
+
+        except Exception as e:
+            return e
