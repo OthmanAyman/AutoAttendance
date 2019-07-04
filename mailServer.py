@@ -7,8 +7,8 @@ from email.mime.multipart import MIMEMultipart
 class Mail():
     def __init__(self):
 
-        self.sender_email = "Auto.Attendance2019@gmail.com"
-        self.password = "AutoAttendance19"
+        self.sender_email = "Email@email.com"
+        self.password = "************"
 
         self.context = ssl.create_default_context()
         try:
