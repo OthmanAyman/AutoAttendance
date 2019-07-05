@@ -1,4 +1,5 @@
 # AutoAttendance
+![alt text](https://github.com/OthmanAyman/AutoAttendance/blob/master/preview.PNG)
 
 ### Requirements:
 * install Cmake 
@@ -9,4 +10,4 @@
 * PyQt5
 #
 
-
+#### after that just run "main.py"
